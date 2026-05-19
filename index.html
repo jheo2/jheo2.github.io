@@ -5,10 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>모바일 청첩장</title>
-
-<meta property="og:title" content="민수 ♥ 지연 결혼합니다" />
-<meta property="og:description" content="2026년 10월 10일 토요일 오후 2시" />
+ 
+<meta property="og:title" content="허정환 💍 유혜진, 결혼합니다."/>
+<meta property="og:description" content="2026년 9월 6일 (일) 16시 30분"/>
+<meta property="og:type" content="website" />
 <meta property="og:image" content="https://picsum.photos/1200/630" />
+<meta property="og:url" content="https://jheo2.github.io/wedd/" /> 
+
+
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+Kakao.init('3d5d8d809fdb449a22ce74efe53d6a3a'); 
+function shareKakao(){
+  Kakao.Share.sendDefault({
+    objectType:'feed',
+    content:{
+      title:'우리 모임',
+      description:'참여해주세요',
+      imageUrl:'https://example.com/thumb.jpg',
+      link:{
+        mobileWebUrl:'https://example.com',
+        webUrl:'https://example.com'
+      }
+    },
+    buttons:[
+      {
+        title:'입장하기',
+        link:{
+          mobileWebUrl:'https://example.com',
+          webUrl:'https://example.com'
+        }
+      }
+    ]
+  });
+}
+</script>
+
 
 <style>
 body{
@@ -74,11 +106,9 @@ h1{
 
 <div class="section">
     <h2>오시는 길</h2>
-
     <p>
         서울 웨딩홀 3층 그랜드홀
     </p>
-
     <a
         class="btn"
         href="https://map.naver.com"
@@ -89,15 +119,26 @@ h1{
 
 <div class="section">
     <h2>마음 전하실 곳</h2>
-
     <p>
         신랑측 국민은행 123456-78-999999
     </p>
-
     <p>
         신부측 신한은행 222-333-444444
     </p>
 </div>
 
+
+<button class="kakao-btn" onclick="shareKakao()">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 3C6.477 3 2 6.582 2 11c0 2.764 1.754 5.198 4.423 6.64l-.89 3.26a.5.5 0 0 0 .747.557L10.2 19.1c.587.083 1.188.126 1.8.126 5.523 0 10-3.582 10-8S17.523 3 12 3z"/>
+  </svg>
+  공유하기
+</button>
+
+
+
+
+
+    
 </body>
 </html>
