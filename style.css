@@ -966,16 +966,16 @@ input[name=act_hand_code] {
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 40px);
-  grid-auto-rows: 80px; 
+  grid-auto-rows: 1px; 
 }
 
 .calendar tr {
-  height: 40px;
+  height: 32px;
 }
 
 .calendar td,
 .calendar th {
-  height: 40px;
+  height: 32px;
   padding: 0;
   overflow: hidden;
   vertical-align: middle;
@@ -989,5 +989,5 @@ input[name=act_hand_code] {
 
 .calendar td.dday {
   background: #FF9845;
-  border-radius: 90%;
+  border-radius: 60%;
 }
