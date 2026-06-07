@@ -969,53 +969,23 @@ input[name=act_hand_code] {
   display: table;
   table-layout: fixed; 
 }   
-/*
-.calendar td,
-.calendar th {
-  height: 40px;  
-  padding: 0;
-  text-align: center;  
-  vertical-align: middle;
-  box-sizing: border-box;
-} 
- 
-.calendar .cell img {
-  width: 30px;
-  height: 30px;
-  display: inline-block;  
-  margin: 0 auto;
-}
 
 
+
+ /*
 .calendar td.dday::before {
   content: "";
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   background: #FFA359;
   border-radius: 50%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 0;
-
-
-}.calendar td.dday {
-  position: relative;
-}
-.calendar td.dday::before {
-  content: "";
-  width: 30px;
-  height: 30px;
-  background: #FFA359;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 0;
+  z-index: -1;
 }  
-.calendar td.dday .cell {
+.calendar td.dday  {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }*/
