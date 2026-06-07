@@ -968,14 +968,9 @@ input[name=act_hand_code] {
     width: 6px;
 }
 
-
-/* =========================
-   Calendar Base Reset
-========================= */
 .calendar {
   width: 100%;
   border-collapse: collapse;
-  border-spacing: 0;
   table-layout: fixed;
 }
 
@@ -983,51 +978,29 @@ input[name=act_hand_code] {
 .calendar td {
   padding: 0 !important;
   margin: 0;
-  line-height: 1 !important;
-  vertical-align: middle;
-  height: 10px; /* 핵심: 고정 높이 */ 
-  max-height: 10px !important;
+  height: 40px;          /* ⭐ 현실적인 고정값 */
   overflow: hidden;
+  vertical-align: middle;
 }
 
-/* =========================
-   Header
-========================= */
-.calendar th.header {
-  line-height: 1;
-}
-
-/* =========================
-   Cell wrapper (span)
-========================= */
+/* span을 컨테이너로 확실히 고정 */
 .calendar td span {
-  display: block;
+  display: flex;
+  width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  line-height: 1 !important;
-  font-size: 0;
 }
 
-/* =========================
-   Image (핵심 fix)
-========================= */
+/* 이미지 완전 고정 */
 .calendar td img {
+  width: 28px;
+  height: 28px;
   display: block;
-  margin: 0;
-  padding: 0;
-  max-width: 100%; 
-  width: 32px;
-  height: 32px;
   object-fit: contain;
 }
 
-/* =========================
-   Safety override
-========================= */
-.calendar td {
-  overflow: hidden;
-}
-.calendar img {
-  vertical-align: middle;
+/* header */
+.calendar th.header {
+  height: 40px;
 }
