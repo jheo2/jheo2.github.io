@@ -13,13 +13,11 @@
 <meta name="HandheldFriendly" content="true">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no, address=no, email=no">
-
-<meta property="og:type" content="article">
-<meta property="og:site_name" content="bojagicard.com">
-<meta property="og:url" content="http://bojagicard.com/i/home.php?uid=h3thnlqj">
-<meta property="og:title" content="허정환♡유혜진의 모바일청첩장">
+  
+<meta property="og:title" content="허정환 💍 유혜진, 결혼합니다."/>
+<meta property="og:description" content="2026년 9월 6일 (일) 16시 30분"/>
 <meta property="og:image" content="http://bojagicard.com/scene/h3/h3thnlqj/merge.jpg?hash=rv1780831123">
-<meta property="og:description" content="http://bojagicard.com/h3thnlqj">
+<meta property="og:type" content="article" />   
 
 <!--<link rel="stylesheet" type="text/css" href="//cloud.bojagicard.com/i/style.css?hash=20260127_1440" />-->
 <link rel="stylesheet" type="text/css" href="/style.css?hash=20260127_1440">
@@ -1668,6 +1666,9 @@ $(function(){
         <li class="share_sns_btn share_kakao_btn">
             <img src="./img/icon_sns_common_kakao.png">
             <span>카카오톡 공유</span>
+            
+
+
         </li>
 
         <!-- 카카오스토리 -->
@@ -3166,4 +3167,90 @@ function kakao_navi() {
     
 } 
 </script> 
+
+
+
+
+
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script>
+Kakao.init('3d5d8d809fdb449a22ce74efe53d6a3a');
+
+function shareKakao(){ 
+  Kakao.Share.sendCustom({
+    templateId: 133320,
+    templateArgs: {
+      title: '제목 영역입니다.',
+      description: '설명 영역입니다.',
+    },
+  }); 
+}
+</script>
+
+<style>
+body{
+    margin:0;
+    font-family:sans-serif;
+    background:#faf7f2;
+    color:#333;
+    text-align:center;
+}
+
+.hero{
+    padding:60px 20px;
+}
+
+h1{
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.date{
+    font-size:20px;
+    margin-bottom:30px;
+}
+
+.photo{
+    width:90%;
+    max-width:500px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.section{
+    padding:50px 20px;
+}
+
+.btn{
+    display:inline-block;
+    padding:14px 28px;
+    background:#d6b48a;
+    color:white;
+    text-decoration:none;
+    border-radius:999px;
+    margin-top:20px;
+    font-size:18px;
+}
+ 
+.kakao-btn{
+    display:inline-block;
+    padding:14px 28px;
+    background:#fee500;
+    color:#000;
+    border:none;
+    border-radius:999px;
+    font-size:16px;
+    margin-top:20px;
+}
+</style>
+
+<div class="section"> 
+    <button class="kakao-btn" onclick="shareKakao()">
+    공유하기
+    </button>
+</div>
+
+
+
+
 </body></html>
