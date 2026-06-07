@@ -968,14 +968,51 @@ input[name=act_hand_code] {
     width: 6px;
 }
 
+
+
+
+/* table 기본 간격 초기화 */
 .calendar {
   border-collapse: collapse;
   border-spacing: 0;
+  width: 100%;
 }
 
+/* th, td 높이 이상 늘어나는 문제 제거 */
 .calendar th,
 .calendar td {
   padding: 0;
+  margin: 0;
+  line-height: 1;
+  height: auto;
+  vertical-align: middle;
+}
+
+/* header도 동일하게 */
+.calendar th.header {
+  line-height: 1;
+  padding: 0;
+}
+
+/* span이 inline이라 생기는 높이 문제 제거 */
+.calendar td span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 0;
+  font-size: 0;
+}
+
+/* 이미지 baseline 여백 제거 핵심 */
+.calendar td img {
+  display: block;   /* ⭐ 가장 중요 */
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+/* 혹시 남는 여백 완전 제거 */
+.calendar td span,
+.calendar td img {
   vertical-align: middle;
 }
