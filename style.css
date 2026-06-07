@@ -969,70 +969,61 @@ input[name=act_hand_code] {
 }
 
 
-
-
-/* table 기본 간격 초기화 */
+/* =========================
+   Calendar Base Reset
+========================= */
 .calendar {
+  width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%;
+  table-layout: fixed;
 }
 
-/* th, td 높이 이상 늘어나는 문제 제거 */
 .calendar th,
 .calendar td {
-  padding: 0;
+  padding: 0 !important;
   margin: 0;
-  line-height: 1;
-  height: auto;
+  line-height: 1 !important;
   vertical-align: middle;
+  height: 38px; /* 핵심: 고정 높이 */
 }
 
-/* header도 동일하게 */
+/* =========================
+   Header
+========================= */
 .calendar th.header {
   line-height: 1;
-  padding: 0;
 }
 
-/* span이 inline이라 생기는 높이 문제 제거 */
+/* =========================
+   Cell wrapper (span)
+========================= */
 .calendar td span {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
   line-height: 0;
   font-size: 0;
 }
 
-/* 이미지 baseline 여백 제거 핵심 */
+/* =========================
+   Image (핵심 fix)
+========================= */
 .calendar td img {
-  display: block;   /* ⭐ 가장 중요 */
-  margin: 10;
-  padding: 20;
-  line-height: 33;
+  display: block;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  height: auto;
 }
 
-/* 혹시 남는 여백 완전 제거 */
-.calendar td span,
-.calendar td img {
+/* =========================
+   Safety override
+========================= */
+.calendar td {
+  overflow: hidden;
+}
+.calendar img {
   vertical-align: middle;
-}
-
-.calendar td,
-.calendar th {
-  line-height: 1 !important;
-  padding: 0 !important;
-  height: auto !important;
-}
-
-.calendar td span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0;
-}
-
-.calendar td img {
-  display: block !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
