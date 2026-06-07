@@ -23,9 +23,9 @@ ul, li {
 a {
     text-decoration: none;
 }
-a, body, ul, li, div, span, table, form, input, textarea, select, button { 
+a, body, ul, li, div, span, form, input, textarea, select, button { 
     box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-    /*font-family: 'SeoulHangangJungL' tbody,tr, th, td,  */
+    /*font-family: 'SeoulHangangJungL' tbody,tr, th, td, table,  */
 }
 
 .mcard_button {
@@ -964,12 +964,10 @@ input[name=act_hand_code] {
     width: 6px;
 }
  
-.calendar { 
-  width: 100%;      
-  height: 221px;
-  display: block;
-  table-layout: fixed;
-  border-collapse: collapse;  
+.calendar {  
+  height: auto !important;
+  display: table;
+  table-layout: fixed; 
 }   
 /*
 .calendar td,
