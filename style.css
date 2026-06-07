@@ -963,33 +963,32 @@ input[name=act_hand_code] {
     top: -2px;
     width: 6px;
 }
+
+.calendar tbody {
+  display: block;
+}
+/*
 .calendar { 
-  width: 100%;          /* 추가: 가로 꽉 차게 */
+  width: 100%;      
   table-layout: fixed;
-  border-collapse: collapse; 
-  /* height: 240px; <- 제거: 내부 콘텐츠 높이에 맞춰 자연스럽게 늘어나도록 */
-}  
-/* 높이는 셀(td, th)에서만 자연스럽게 제어 */
+  border-collapse: collapse;  
+}   
 .calendar td,
 .calendar th {
-  height: 40px; /* 32px가 너무 답답하다면 조금 늘려주셔도 좋습니다 */
+  height: 40px;  
   padding: 0;
-  text-align: center; /* 추가: 날짜 이미지 중앙 정렬 */
+  text-align: center;  
   vertical-align: middle;
   box-sizing: border-box;
 } 
-
-/* 캘린더 이미지 정중앙 배치 보정 */
+ 
 .calendar .cell img {
   width: 30px;
   height: 30px;
-  display: inline-block; /* block 대신 inline-block 추천 */
+  display: inline-block;  
   margin: 0 auto;
 }
-/*
-.calendar td.dday {
-  position: relative;
-}
+
 
 .calendar td.dday::before {
   content: "";
