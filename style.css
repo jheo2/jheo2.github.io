@@ -23,9 +23,9 @@ ul, li {
 a {
     text-decoration: none;
 }
-a, body, ul, li, div, span, table, tbody, tr, th, td, form, input, textarea, select, button { 
+a, body, ul, li, div, span, table, form, input, textarea, select, button { 
     box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-    /*font-family: 'SeoulHangangJungL'*/
+    /*font-family: 'SeoulHangangJungL' tbody,tr, th, td,  */
 }
 
 .mcard_button {
