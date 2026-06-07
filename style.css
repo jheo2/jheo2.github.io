@@ -986,6 +986,7 @@ input[name=act_hand_code] {
   display: inline-block; /* block 대신 inline-block 추천 */
   margin: 0 auto;
 }
+/*
 .calendar td.dday {
   position: relative;
 }
@@ -1021,4 +1022,4 @@ input[name=act_hand_code] {
 .calendar td.dday .cell {
   position: relative;
   z-index: 1;
-}
+}*/
