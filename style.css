@@ -965,6 +965,7 @@ input[name=act_hand_code] {
 }
 
 .calendar tbody {
+  height: 221px;
   display: block;
 }
 /*
