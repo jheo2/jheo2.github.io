@@ -521,8 +521,7 @@ $(function() {
 
     })
 
-    $('#map_frame').attr('src', 'map_daum.php?uid='+uid+'&lat=' + map_lat + '&lng=' + map_lng + '&map_name=' + venue_name + '&map_addr=' + map_addr + '&map_road=' + map_road)
-
+    $('#map_frame').attr('src', 'https://bojagicard.com/i/map_daum.php?uid='+uid+'&lat=' + map_lat + '&lng=' + map_lng + '&map_name=' + venue_name + '&map_addr=' + map_addr + '&map_road=' + map_road)
 
     $('.map_img').on('click', function() {
         window.open($('#map_frame').attr('src'))
