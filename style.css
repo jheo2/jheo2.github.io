@@ -1006,13 +1006,33 @@ input[name=act_hand_code] {
 /* 이미지 baseline 여백 제거 핵심 */
 .calendar td img {
   display: block;   /* ⭐ 가장 중요 */
-  margin: 0;
-  padding: 0;
-  line-height: 0;
+  margin: 10;
+  padding: 20;
+  line-height: 33;
 }
 
 /* 혹시 남는 여백 완전 제거 */
 .calendar td span,
 .calendar td img {
   vertical-align: middle;
+}
+
+.calendar td,
+.calendar th {
+  line-height: 1 !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.calendar td span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.calendar td img {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
