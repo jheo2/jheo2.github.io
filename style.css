@@ -969,8 +969,9 @@ input[name=act_hand_code] {
   border-collapse: collapse; 
   height: 220px;   
 }
-.calendar tbody {
-  height: 100%;
+.calendar tbody { 
+  height: 32px;       
+  display: block;
 }
 .calendar tr {
   height: 32px;
