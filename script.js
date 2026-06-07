@@ -1,0 +1,1601 @@
+$(function() {
+
+    $('#bgm').on('click', function(e) {
+        if (e.target !== e.currentTarget) return false
+    })
+
+    $('#bgm_pp_btn').on('click', function() {
+
+        if (parseInt($('#bgm').css('right')) < 0) {  // 숨겨짐
+
+            if ($('#mcard_bgm').get(0).paused == false) {  // 재생중이면
+
+                // STOP
+                $(this).removeClass('bgm_pp_btn_play')
+                $('#mcard_bgm').get(0).pause()
+
+            } else {
+
+                // PLAY
+                $(this).addClass('bgm_pp_btn_play')
+                $('#mcard_bgm').get(0).play()
+
+                // OPEN
+                $('#bgm').delay(500).animate({
+                    'right': '12px'
+                }, 120)
+
+                // AUTO CLOSE : TIMER
+                setTimeout(function(){
+                    $('#bgm').animate({
+                        'right': '-202px'
+                    })
+                }, 3000)
+
+            }
+
+        } else {
+
+            // STOP
+            $(this).removeClass('bgm_pp_btn_play')
+            $('#mcard_bgm').get(0).pause()
+
+            // CLOSE
+            $('#bgm').animate({
+                'right': '-202px'
+            })
+
+        }
+
+    })
+
+
+    // CLOSE
+    $('#bgm_close_btn').on('click', function() {
+        $('#bgm').animate({
+            'right': '-186px'
+        })
+    })
+
+
+    // NEXT SONG
+    $('#mcard_bgm').on('ended', function() {
+
+        var sseq = 0
+        var sseq_max = 0
+        $('song').each(function() {
+            sseq_max = $(this).data('sseq')
+            if ($('#mcard_bgm').get(0).currentSrc == encodeURI($(this).attr('src'))) {
+                sseq = $(this).data('sseq')
+            }
+            
+        })
+
+        var sseq_next = sseq + 1
+        if (sseq_next > sseq_max) sseq_next = 1
+        var bgm_next = $('song[data-sseq='+sseq_next+']')
+
+        $('#bgm_cover_img').attr('src', '//gws1.bojagicard.com/audio/'+$(bgm_next).data('cover'))
+        $('#bgm_now_song').text($(bgm_next).data('song'))
+        $('#bgm_now_arti').text($(bgm_next).data('arti'))
+        $('#mcard_bgm > source').attr('src', $(bgm_next).attr('src'))
+        $('#mcard_bgm').get(0).load()
+        $('#mcard_bgm').get(0).play()
+        
+    })
+
+    setInterval(function() {
+        bgm_prog_update()
+    }, 100)
+
+
+    /*
+    $(window).bind('scroll', function() {
+    
+        if (parseInt($('#bgm').css('right')) > 0) {  // 펼쳐져 있으면
+
+            // AUTO CLOSE : SCROLL
+            setTimeout(function(){
+                $('#bgm').animate({
+                    'right': '-186px'
+                })
+            }, 1000)
+
+        }
+    
+    })
+    */
+
+
+})
+
+
+
+function bgm_prog_update() {
+    if ($('#mcard_bgm').get(0).paused == false) {
+        var cur = $('#mcard_bgm').get(0).currentTime
+        var dur = $('#mcard_bgm').get(0).duration
+        var per = parseInt(cur / dur * 100)
+        var wpx = 85 / 100 * per
+        $('#bgm_now_prog_played').css('width', wpx+'px')
+        if (cur == dur) {
+            $('#mcard_bgm').get(0)
+        }
+    }
+}
+
+
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+var wsc_top = 0
+var menu_height = 0
+var msg_area = 'guest'
+var msg_idx = 0
+var msg_root = 0
+var screen_scale = window.visualViewport.scale
+var default_scale = parseFloat(screen_scale)  // 초기 viewport
+var tolerance = parseFloat(0.2)
+var refreshSwiper
+var popTriggered = false
+var rsvpFormWrap, rsvpForm, confirmPopup, attendanceInner, attendanceArticles  // 참석여부
+var $frameHome, $frameAdm, frameHomeEl, frameAdmEl, frameHome, frameAdm  // 설정 미리보기
+$frameHome = parent.$('#frameHome')
+$frameAdm = parent.$('#frameAdm')
+frameHomeEl = $frameHome[0]
+frameAdmEl  = $frameAdm[0]
+frameHome = $frameHome.contents()
+frameAdm = $frameAdm.contents()
+
+
+//
+// scroll event
+//
+$(window).on('scroll', function() {
+    wsc_top = parseInt($(window).scrollTop())
+
+    // POPUP CLOSE TRIGGERS
+    if ($('#photo_view_menu').css('display') != 'none') mask(0)
+    if ($('#reply_form').css('display') != 'none') mask(0)
+
+    sessionStorage.setItem('home_scroll_pos', window.pageYOffset)
+
+    let scrollX = $(window).scrollLeft()
+    let scrollY = $(window).scrollTop()
+
+
+    // 영역 팝업 스크롤 이벤트 start ------------------------------
+
+    if(popTriggered) return
+
+    var popupTarget = $('.section[data-pop_type]').eq(0)
+    if(!popupTarget.length) return
+
+    // 팝업 여부  판단
+    if (!shouldOpenSectionPopup(popupTarget)) {
+        return
+    }
+
+    var secondSection = $('.section:visible').eq(2)
+    if(!secondSection.length) return
+
+    // 팝업 스크롤 이벤트 시작
+    var triggerPoint = secondSection.offset().top + (secondSection.outerHeight() / 2)
+    var currentPoint = $(window).scrollTop() + $(window).height()
+
+    if(currentPoint >= triggerPoint){
+        popupTarget.addClass('show')
+        popTriggered = true
+    }
+    // ------------------------------ 영역 팝업 스크롤 이벤트 end
+})
+
+
+//
+// load event
+//
+window.addEventListener('load', function() {
+    const scrollPosition = sessionStorage.getItem('home_scroll_pos')
+
+    let lastClickedSection = sessionStorage.getItem('adm_last_section') // 예: 'skin', 'bank' 등
+    if (frameAdmEl && frameAdmEl.contentWindow.location.hash === '#map') lastClickedSection ='map'
+
+    setTimeout(function() {
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition)) // 이전 스크롤 복원
+        }
+
+        if (scrollPosition && lastClickedSection === 'main') {
+            window.scrollTo(0, 0)
+        }
+
+        let targetSection = $('.section[data-section='+lastClickedSection+']')
+        if (targetSection.length > 0) {
+            let targetTop = targetSection.offset().top
+            window.scrollTo(0, targetTop)
+        }
+
+    }, 500)  // 1000ms = 1초 후
+
+})
+
+//
+//  function ready
+//
+$(function() {
+
+    // 페이지 진입 시 팝업 숨김여부 결정
+    var popupTarget = $('.section[data-pop_type]')
+    initSectionPopup(popupTarget)
+
+    var info_error = false
+    if (m_name.length < 1) info_error = true
+    if (g_name.length < 1) info_error = true
+
+    // 쿠키 없으면 설정아이콘 노출
+    let settingBtnShow = true
+    if ($.cookie('setting_click_check') == 'check') settingBtnShow = false
+    if (frameHome.length > 0) settingBtnShow = false
+    if ($('#tail_menu_section').length == 0) settingBtnShow = false
+
+    // 설정버튼 노출여부
+    if (!settingBtnShow) {
+    	$('.home_settiong_wrapper').css('opacity', 0)
+    } else {
+    	$('.home_settiong_wrapper').css('opacity', 1)
+    }
+
+    // 하단 설정하기 메뉴 쿠키 저장값
+    $('#tail_button_config').on('click', function() {
+        $.cookie('setting_click_check', 'check')
+    })
+
+    // 초기화면 설정버튼 노출 여부
+    if (frameHome.length == 0) {
+        $('.sc-conditinal-box').show()
+    }
+
+    // 설정 아이콘 클릭 트리거
+    $('.home_settiong_btn').on('click' , function() {
+        $('.tail_menu_section_fold').show()
+        $('body, html').animate({scrollTop : ($('#tail_button_config').offset().top)}, 600);
+        $('.home_settiong_wrapper').hide()
+        $('.setting_fade').addClass('on')
+    })
+
+    // footer 노출 여부
+    if (info_error == true) {
+        $('.tail_fold_btn').hide()
+        $('.tail_menu_section_fold').show()
+    } else {
+        $('.tail_fold_btn').show()
+        $('.tail_menu_section_fold').hide()
+    }
+
+    $('.tail_fold_btn').on('click', function() {
+        if($(this).hasClass('on')) {
+            $('.tail_menu_section_fold').stop().slideUp()
+            $(this).removeClass('on')
+        } else {
+            $('.tail_menu_section_fold').stop().slideDown()
+            $(this).addClass('on')
+            $('body, html').animate({scrollTop : ($('#tail_block').offset().top)}, 250);
+        }
+
+    })
+
+    // 혼주들 이름들중 길이가 다른 이름이 있는지 체크
+    let parents_name_length_diff = 0
+
+    let parents_name_lengths = new Array()
+    $('.insa_parent_block > .parent_name').each(function() {
+        if ($(this).text().length > 0) {
+            parents_name_lengths.push($(this).text().length)
+        }
+    })
+
+    if (Math.min(...parents_name_lengths) != Math.max(...parents_name_lengths)) {
+        let parents_name_length_diff = 1  // 길이가 다른 이름이 있으면 align left 적용
+    }
+
+
+    // 혼주이름의 길이가 모두 같은경우
+    if (parents_name_length_diff == 0) {
+
+        // 혼주 이름 전체가 한글인지 체크
+        let all_korean = false
+        let parent_names = $('.insa_parent_block > .parent_name').text()
+        if (/^[가-힣]*$/.test(parent_names)) {
+            all_korean = true
+        }
+
+        if (all_korean) {
+            $('.insa_parent_block').css('text-align', 'left')
+        }
+
+    }
+
+    // 마스크영역 클릭시 끄기 트리거
+    $('#mask').bind('click', function() {
+        if (mask_release_allow == true && $(this).css('opacity') > 0.1) {
+            if ($('#mcni_wrapper').css('display') != 'none') {
+                $('body').css('height', $(document).height() + 'px')
+            }
+            mask(0)
+        }
+    })
+
+    // 입력폼 자동완성 끄기
+    $('form').each(function() {
+        $(this).attr('autocomplete', 'off')
+    })
+
+    // 입력상자 크기 자동조절 트리거
+    $('textarea').bind('keyup', function(e) {
+        textarea_resize($(this))
+    })
+
+
+    /* ==========================================
+                        CONTACT
+    =============================================*/
+
+    $('.contact_button').on('click', function() {
+        mask(0.5)
+        var type = $(this).data('type')
+        $('#contact_' + type).show()
+    })
+
+    $('.family_group_block').each(function(){
+        var side = $(this).data('type')
+        var side_row_count = $('.contact_row[data-side='+side+']', this).length
+        if (side_row_count == 0) {
+            $('.section_content_wrap').removeClass('section_content_wrap_'+side)
+            $('.family_group_block').addClass('family_group_block_'+side) // contact border
+        } else {
+            $('.section_content_wrap').addClass('section_content_wrap_'+side)
+            $('.family_group_block').removeClass('family_group_block_'+side)
+        }
+
+    })
+
+    $('.bank_family_group_block').each(function(){
+        var side = $(this).data('type')
+        var side_row_count = $('.family_members[data-side='+side+']', this).length
+        if (side_row_count == 0) {
+            $('.bank_family_group_block').addClass('bank_family_group_block_'+side) // bank border 숨김
+        } else {
+            $('.bank_family_group_block').removeClass('bank_family_group_block_'+side)
+        }
+
+    })
+
+    /* ==========================================
+                   갤러리 PHOTO LIST A
+    =============================================*/
+
+    // 사진 리스트 더 보기 기능
+    $('#photo_more_row').on('click', function() {
+        $('#photo_more_img').attr('src', './img/loading4.gif')
+        setTimeout(function() {
+            $('.photo_wrapper').show()
+            $('#photo_list_br_upload_row').show()
+            $('#photo_more_row').hide()
+        }, 450)
+    })
+
+    // 보정서비스
+    $('#prod_banner1_close_checkbox').on('click', function() {
+        $(this).attr('src', '/m/img/200903_01_01-checked.png')
+        $.cookie('mcard_prod_banner1_off', 1, {
+            expires: 90,
+            path: '/'
+        })
+        $('#prod_banner1').fadeOut()
+    })
+
+    /* ==========================================
+                갤러리 PHOTO LIST B
+    ============================================= */
+
+    var photo_view_swiper
+    var photo_thmb_swiper
+    var photo_pop_swiper
+
+    // 사진 슬라이드
+    photo_view_swiper = new Swiper('#photo_view_swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        observer: true,
+        observeParents: true,
+        loop: false,
+        on: {
+
+        },
+        navigation: {
+            nextEl: "#photo_view_next_btn",
+            prevEl: "#photo_view_prev_btn",
+        },
+    })
+
+    // 사진 썸네일 슬라이드
+    photo_thmb_swiper = new Swiper("#photo_thmb_swiper-container", {
+        slideToClickedSlide: false,
+        on: {
+            slideChange: function() {
+                // 썸네일 그룹(5개묶음) 페이징 오류 회피용. 오류 찾아내서 수정 필요
+                $('#photo_thmb_swiper-pagination > span').removeClass('swiper-pagination-bullet-active')
+                $('#photo_thmb_swiper-pagination').children().eq(this.activeIndex).addClass('swiper-pagination-bullet-active')
+            }
+        },
+
+        pagination: {
+            el: '#photo_thmb_swiper-pagination',
+            clickable: true,
+            type: 'bullets'
+        },
+
+    })
+
+    // 사진 팝업 슬라이드
+
+    photo_pop_swiper = new Swiper('#photo_pop_swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        observer: true,
+        observeParents: true,
+        slideToClickedSlide: true,
+        on: {
+            init: function() {
+                $('#photo_pic_pop_wrapper').hide()  // 초기화 이후, 사진 팝업 영역 숨김
+            },
+            slideChangeTransitionEnd: function() {
+                var page = Math.floor(this.realIndex)
+                photo_view_swiper.slideTo(page)
+            },
+        },
+        navigation: {
+            nextEl: "#photo_pop_next_btn",
+            prevEl: "#photo_pop_prev_btn",
+        },
+    })
+
+    $('.photo_view_slide').on('click', function() { // 갤러리 이미지 클릭 트리거
+        let idx = $(this).index()
+
+        $('#photo_pic_pop_wrapper').show()
+        $('.photo_pop_img').css('opacity', '1')
+        $('.pop_close_btn_wrap').css('opacity', '1')
+        $('.pop_bg_layer').fadeIn() // 레이어 배경 보임
+        $('body, html').addClass('notScroll')
+        $('#photo_view_btn_row').fadeIn()
+        photo_pop_swiper.slideTo(idx, 0)
+
+        //네비게이션 버튼
+        setTimeout(function() {
+            $('#photo_view_btn_row').hide()
+        }, 4000)
+
+    })
+
+    // 사진 크게보기 닫기
+    $('.photo_pop_img, .pop_close_btn_wrap, #photo_pic_pop_wrapper').on('click', function() {
+        $('#photo_pic_pop_wrapper').hide()
+        $('.pop_bg_layer').fadeOut()
+        $('body, html').removeClass('notScroll')
+    })
+
+    // PHOTO THMB 이미지 클릭시
+    //$('.photo_thmb_thm_img').on('click', function() {
+    $(document).on('click', '.photo_thmb_thm_img', function() {
+        // PHOTO VIEW IMAGE 처리
+        var key = $(this).data('key')
+        photo_view_swiper.slideTo(key)
+
+        // 클릭한 썸네일 활성처리
+        $('.photo_thmb_thm_img').css('opacity', '1')
+        $(this).css('opacity', '0.3')
+
+    })
+
+
+
+    /* ==========================================
+                        오시는길
+    ============================================= */
+
+    if (map_tel == '') {
+        $('.tel_ask_btn').hide()
+    }
+
+    // 지도, 약도 탭
+    $('.mcard_map_type_btn').on('click', function() {
+
+        // 탭 버튼 활성 처리
+        $('.mcard_map_type_btn').each(function() {
+            $(this).removeClass('mcard_button2_on')
+        })
+        $(this).addClass('mcard_button2_on')
+
+        // 클릭한 타입의 지도 출력처리
+        $('.map_object').hide()
+        $('.map_object[data-cat=' + $(this).data('cat') + ']').show()
+
+    })
+
+    $('#map_frame').attr('src', 'map_daum.php?uid='+uid+'&lat=' + map_lat + '&lng=' + map_lng + '&map_name=' + venue_name + '&map_addr=' + map_addr + '&map_road=' + map_road)
+
+
+    $('.map_img').on('click', function() {
+        window.open($('#map_frame').attr('src'))
+    })
+
+    $('.map_img_zoom_btn').on('click', function() {
+        window.open('_img_large.php?src_url=' + $('.map_view_img').attr('src'))
+    })
+
+    /* ==========================================
+                        계좌
+    =============================================*/
+
+    var family_group_name_prefix = new Array()
+    family_group_name_prefix['a'] = '신랑'
+    family_group_name_prefix['b'] = '신부'
+
+    var family_group_name_color = new Array()
+    family_group_name_color['a'] = '#8aa5d6'
+    family_group_name_color['b'] = '#ee8196'
+
+    // 보기
+    $('.bank_txt_view_btn').on('click', function() {
+
+        $('#bank_pop_title').css('color', family_group_name_color[$(this).data('family_group_type')])
+        $('#bank_pop_title').text(family_group_name_prefix[$(this).data('family_group_type')] + '측 계좌번호')
+        $('#bank_pop_txt_unm').text($(this).prev().text())
+
+        $('#bank_pop_txt_acc').text($(this).data('bank_name') + ' ' + $(this).attr('data-bank_num'))
+
+        $('#bank_popup').show()
+        mask(0.4)
+
+    })
+
+    // 계좌 목록이 접혀있는 상태인지 확인
+    let fold_cnt = 0
+    $('.bank_family_group_block > .family_bank_info_block').each(function(){
+        if($(this).css('display') != 'none') {
+            fold_cnt++  // 목록이 접혀있지 않은 경우 카운트
+        }
+    })
+
+    if (use_bank_fold == 1) { // 계좌 목록 접힘상태
+        $('.family_members').children('.fold_arrow_btn_wrapper').children('.mcard_fold_arrow_btn').removeClass('on')  // 토글 버튼 v(접힘)
+        $('.family_bank_info_block').hide()
+    } else {
+        $('.family_members').children('.fold_arrow_btn_wrapper').children('.mcard_fold_arrow_btn').addClass('on')   // 토글 버튼 ^ (펼침)
+        $('.family_bank_info_block').show()
+    }
+
+    // 계좌 fold 기능
+    $('.family_members').on('click', function() {
+        let data_side = $(this).data('side')
+        let current_row = $(this).parent('.family_members')
+        let row_arrow = $(this).children('.fold_arrow_btn_wrapper').children('.mcard_fold_arrow_btn')
+        let last_row = $('.family_members[data-side='+data_side+']').last()
+
+        /* 버튼 on, off에 따라 동작 */
+        if ($(row_arrow).hasClass('on')) {
+            $(row_arrow).removeClass('on')  // toggle 화살표 방향 변경
+            $(this).next('.family_bank_info_block').hide()  // 계좌 내용 숨김
+        } else {
+            $(row_arrow).addClass('on')
+            $(this).next('.family_bank_info_block').show()  // 계좌 내용 보임
+        }
+    })
+
+    let current_deposit_url = ''
+    $('.bank_kakao_link_btn').on('click', function() {
+        let deposit_url = $(this).data('link')
+        current_deposit_url = deposit_url
+
+        if (is_pc) {
+            alert("모바일기기에서 이용해 주세요")
+        } else {
+            $('.homePopupBlock').show()
+            mask(0.4)
+        }
+
+        //$('.homePopupBlock').children().children('.comfirm_btn_box').attr('data-deposit', deposit_url)
+
+    })
+
+    // $('.bank_deposit_ok_btn').on('click', function() {
+    $(document).on('click', '.bank_deposit_ok_btn', function() {
+        let url = current_deposit_url
+        if (is_pc) {
+            alert("모바일기기에서 이용해 주세요")
+        } else {
+            window.location.href = url
+        }
+    })
+
+    $('.bank_deposit_ok_btn').on('click', function() {
+        let url = $(this).parent('.comfirm_btn_box').data('deposit')
+        window.location.href = url;
+    })
+
+    $('.bank_deposit_cancel_btn').on('click', function() {
+        $(this).parent('.comfirm_btn_box').attr('data-deposit', '')
+        $('.homePopupBlock').hide()
+        mask(0)
+    })
+
+
+    // 복사
+    $('.bank_pop_copy_btn').on('click', function() {
+        var bank_txt = $(this).parent('.bank_copy_btn_wrapper').prev('.bank_info_wrapper').children('.bank_info_box').children()
+                       .text().replace(/-/g,'').replace(/\n\s+/g, '\n').trim()
+        if (bank_txt.length > 1) {
+            clipboard_copy(bank_txt)
+            alert(bank_txt + '\n복사되었습니다')
+        }
+    })
+
+
+    // 닫기
+    $('#bank_pop_close_btn').on('click', function() {
+        $('#bank_popup').hide()
+        mask(0)
+    })
+
+
+    /* 계좌 토글 */
+    if ($('.bank_family_group_block').css('display') == 'none' ) {
+        $('.mcard_fold_bar').addClass('on')
+        $('.mcard_fold_arrow_btn').addClass('on')
+    }
+    $('.mcard_fold_bar').on('click', function() {
+
+        let bank_info_box = $(this).next('.bank_family_group_block')  // 계좌번호 정보 영역
+
+        if($(bank_info_box).css('display') == 'none' ) {
+            $(this).removeClass('on')
+            $(this).children('.mcard_fold_arrow_btn').removeClass('on')
+            $(this).next().show()
+        } else {
+            $(this).addClass('on')
+            $(this).children('.mcard_fold_arrow_btn').addClass('on')
+            $(this).next().hide()
+        }
+
+    })
+
+
+/* ==========================================
+                      예식참석확인
+    =============================================*/
+    rsvpForm = $('#rsvpForm')
+    confirmPopup = $('#confirmPopup')
+    // popup x 추가
+    $('.section[data-section_pop="1"]').each(function() {
+        if (!$(this).children('.pop_close_btn_wrap').length) {
+            $(this).prepend(
+                '<div class="pop_close_btn_wrap" style="opacity: 1;">' +
+                    '<div class="pop_close_btn"></div>' +
+                '</div>'
+            );
+        }
+    })
+
+    // 커스텀 라디오 그룹 클릭
+    $(document).on('click', '.ui-radio-group .ui-radio-btn-wrapper', function() {
+        var group = $(this).closest('.ui-radio-group');
+        $(this).addClass('on').siblings().removeClass('on');
+    })
+
+    // 커스텀 체크박스 클릭
+    $(document).on('click', '.ui-checkbox-item', function() {
+        $(this).toggleClass('checked');
+    })
+
+    // 팝업 닫기 버튼
+    $(document).on('click', '.section[data-section_pop="1"] .pop_close_btn_wrap', function() {
+        let popupSection = $(this).closest('.section')
+        applySectionPopupState(popupSection)
+    })
+
+    // 참석, 불참
+    $('.ui-radio-group[data-type=att] .ui-radio-btn-wrapper').on('click', function() {
+
+        $(this).addClass('on').siblings().removeClass('on')
+        $('.sc-att-confirm-btn-wrap').show()
+        $('.ui-attendance-form-inner').show()
+
+        if ($(this).data('value') == 1) {
+
+            $('article[data-article_type=base]').find('[data-fld_type=companions]').show()
+            $('article[data-enabled=1]').show()
+
+            $('.sc-att-confirm-btn-wrap > span').html(
+                '총 <span class="sc-att-count">' +
+                ((+$('select[name="joiners_count"]').val() || 0) + 1) +
+                '명</span>이 참가합니다. (확인)'
+            )
+
+        } else {
+
+            $('article[data-article_type=base]').find('[data-fld_type=companions]').hide()
+            $('article[data-article_type=meal]').hide()
+
+            $('.sc-att-confirm-btn-wrap > span').text('불참합니다. (확인)')
+        }
+
+        $('#rsvp_section').addClass('form_active')
+
+        if ($('#rsvp_section').attr('data-section_pop') == '1') {
+            $('#rsvp_section').height($('#rsvp_section')[0].scrollHeight - 1)
+        }
+
+    })
+
+    // 동반인 인원수 셀렉트
+    $('select[name="joiners_count"]').on('change', function() {
+        var joinersCount = parseInt($(this).val())
+        var totalCount = joinersCount + 1
+        var mealGroup = $('.ui-radio-group[data-type="meal"]')
+
+        // 동행인 이름 입력란
+        if (joinersCount > 0) {
+            $('.sc-joiners-box').show()
+        } else {
+            $('.sc-joiners-box').hide()
+            $('input[name=joiners]').val('')
+        }
+
+        renderMealGroup(totalCount)  // 식사인원 출력
+
+        // 확인 버튼 인원 수 변경
+        $('.ui-att-confirm-btn-wrap .sc-att-count').text(totalCount+'명')
+    })
+
+
+    //
+    // 참석여부 데이터 확인 및 전송
+    //
+    // 내용 확인
+    $('.sc-att-confirm-btn-wrap').on('click', function() {
+        validateAndShowLayer()
+    })
+
+    // 내용수정
+    $('.sc-popup-btn[data-btn_type=modify]').on('click', function() {
+         confirmPopup.hide()
+         rsvpForm.show()
+    })
+
+    // 최종 데이터 전송 확인
+    $('.sc-popup-btn[data-btn_type=confirm]').on('click', function() {
+        submitRsvp()
+    })
+
+
+
+
+    /* ==========================================
+                      축하메시지
+    =============================================*/
+    /*
+          [수정하기]
+                        */
+
+    $('.msg_edit_button').live('click', function(e) {
+
+        msg_area = $(this).parent().data('area')
+        msg_idx = $(this).parent().data('idx')
+        msg_root = $(this).parent().data('idx')
+
+        //메시지 편집폼
+        $('#msg_form_title').text('댓글 수정')
+        if (msg_area == 'guest' && msg_idx == msg_root) $('#msg_form_title').text('축하 메시지 수정')
+        mask(0.5)
+        $('#reply_form').css({
+            'display': 'block',
+            'left': wrapper_left_margin + 'px',
+            'width': wrapper_width + 'px'
+            //'top': window.innerHeight/5+'px'
+        })
+
+        //내용읽어서
+        var memo = $('.msg_text[data-idx=' + msg_idx + ']').text()
+
+        //메시지 편집폼 텍스트값 입력
+        $('#reply_form_textarea').val(memo)
+
+        //텍스트박스 크기조정
+        var tmp = memo.split('\n')
+        var row_count = tmp.length
+        for (i = 0; i < tmp.length; i++) {
+            if (tmp[i].length > 40) row_count++
+        }
+        $('#reply_form_textarea').attr('alt', row_count)
+        textarea_resize($('#reply_form_textarea'))
+
+        //알림체크 적용
+        reply_form_notify($(this).data('notify'))
+
+
+        //작성자만 수정 가능
+        if ($(this).parent().data('mail') == $.cookie('mcard_guest_user_mail')) {
+            $('#reply_form_textarea').prop('disabled', false)
+            $('#reply_mail_notify_row').show()
+            $('#reply_form_edit_writer_notice').hide()
+            $('#msg_form_submit_button').show()
+        } else {
+            $('#reply_form_textarea').prop('disabled', true)
+            $('#reply_mail_notify_row').hide()
+            $('#reply_form_edit_writer_notice').show()
+            $('#msg_form_submit_button').hide()
+        }
+
+
+    })
+
+
+
+    /*
+          [답글달기]
+                        */
+    $('.msg_reply_button').live('click', function(e) {
+
+        msg_area = $(this).parent().data('area')
+        msg_idx = $(this).parent().data('idx')
+        msg_root = $(this).parent().data('idx')
+
+        var croot_name = $('.msg_name[data-idx=' + msg_idx + ']').text()
+        var parent_idx = $(this).data('parent_idx')
+
+        $('#msg_textarea').val('').attr('placeholder', '@' + croot_name)
+
+        $('#msg_textarea').focus() //람다함수 사용금지
+
+        if (!iOS) {
+            //원글이 잘 보이게 자동스크롤
+            $('html, body').animate({
+                scrollTop: $('.msg[data-idx=' + msg_root + ']').offset().top - 45
+            }, 0)
+        }
+
+    })
+
+
+    // ** 수정폼의 [등록하기] 버튼 클릭시
+    $('#msg_form_submit_button').live('click', function() {
+
+        var user_name = $('input[name=guest_user_name]').val().trim()
+        var user_mail = $('input[name=guest_user_mail]').val().trim()
+
+        var post_data = {
+            'uid': uid,
+            'area': msg_area,
+            'idx': msg_idx,
+            'name': encodeURIComponent(user_name),
+            'mail': user_mail,
+            'memo': encodeURIComponent($('#reply_form_textarea').val().trim()),
+            'notify': $('input[name=reply_notify]').val(),
+            'area': msg_area,
+            //'parent': photo_idx,
+            'send_type': 'ajax'
+        }
+
+
+        $.ajax({
+
+            type: 'POST',
+            url: '_msg_proc.php',
+            data: post_data,
+            //contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+            beforeSend: function(jqXHR) {
+                jqXHR.overrideMimeType('application/x-www-form-urlencoded;charset=UTF-8')
+            },
+            success: function(data) {
+
+                mask(0)
+                $('.msg[data-idx=' + msg_idx + ']').replaceWith(data)
+                $('.msg[data-idx=' + msg_idx + ']').css({
+                    'background-color': '#eaeaea'
+                })
+                setTimeout(function() {
+                    $('.msg[data-idx=' + msg_idx + ']').animate({
+                        backgroundColor: '#ffffff'
+                    }, 1000)
+                }, 300)
+                msg_root = 0
+
+            },
+            error: function(xhr, textStatus) {}
+
+        })
+
+
+    })
+
+
+    // ** 수정폼의 [삭제] 버튼 클릭시
+    $('#msg_delete_button').live('click', function() {
+
+        var delete_confirm_text = '등록된 메시지가 삭제됩니다.'
+
+        //댓글이 있는지 확인
+        var this_reply_count = $('.msg[data-croot=' + msg_idx + ']').length - 1
+        if (this_reply_count > 0) delete_confirm_text += '\n\n댓글이 등록되있습니다. 삭제시, 댓글도 모두 지워집니다.'
+
+        //삭제여부 확인
+        if (!confirm(delete_confirm_text)) {
+            return false
+        }
+
+        $.get('_msg_del_proc.php?idx=' + msg_idx + '&area=' + msg_area, function(data) {
+
+            mask(0)
+
+            r = JSON.parse(data)
+            if (r.error_code == 0 && r.idx) {
+                $('.msg[data-idx=' + r.idx + '], .msg[data-croot=' + r.idx + ']').css({
+                    'background-color': '#eaeaea'
+                })
+                $('.msg[data-idx=' + r.idx + '], .msg[data-croot=' + r.idx + ']').animate({
+                    opacity: 0
+                }, 700, function() {
+                    $(this).remove()
+                    msg_root = 0
+                    if (msg_area == 'photo') photo_reply_update(photo_idx)
+                    //전체 메시지 갯수 업데이터 필요
+                    if ($('input[name=guest_logout]').val() == 1) {
+                        $.cookie('mcard_guest_user_name', null)
+                        $.cookie('mcard_guest_user_mail', null)
+                        location.reload()
+                    }
+                })
+            }
+
+        })
+
+    })
+
+
+    // Guest form close
+    $('.form_close_button').on('click', function() {
+        mask(0)
+    })
+
+
+    // 수정모드 입력상자
+    $('#reply_form_textarea').on('keyup', function() {
+        if ($(this).val().trim().length > 0) {
+            $('#msg_form_submit_button').css({
+                'color': '#333333',
+                'border-color': '#333333'
+            })
+        } else {
+            $('#msg_form_submit_button').css({
+                'color': '#efefef',
+                'border-color': '#efefef'
+            })
+        }
+    })
+
+
+    // 축하글 더 보기 버튼
+    $('.guest_more_btn').on('click', function(){
+        var clicked = Number($(this).data('clicked')) + 1
+        clicked++
+        $(this).data('clicked', clicked)
+        i = 0
+        $('.article_row').each(function(){
+            i++
+            if (i < clicked*10) $(this).show()
+        })
+
+        if (clicked*10 >= $('.article_row').length) {
+            $('.guest_more_btn').fadeOut('slow')
+        }
+
+    })
+
+
+
+
+    // 서브페이지 상단
+    $('#mcard_top_back_button').bind('click', function() {
+        history.back()
+    })
+
+
+    //
+    //  청첩장 만들기 안내 팝업
+    //
+    var notice_text_wrapper_hidden = false  // 공지내용 미노출 여부 결정 ( false : 노출, true: 미노출)
+    if($('#mcard_make_notice_block').length) {
+
+        // 닫기 버튼 클릭했을 때
+        $('.mcard_make_close_btn_wrapper').on('click', function() {
+            $('.mcard_make_notice_text_wrapper').slideUp()
+            //$.cookie('mcard_make_notice', '1')
+            notice_text_wrapper_hidden = true
+        })
+
+        // 스크롤 시 팝업 보임, 숨김
+        $(window).on('scroll', function() {
+            var first_block_Height = $('#scene_wrapper').outerHeight()
+
+            if(notice_text_wrapper_hidden == false) {  // 공지내용 미노출이 아닌 경우
+                if ($(this).scrollTop() >= 200) {
+                    $('.mcard_make_notice_text_wrapper').slideUp()
+                } else {
+                    $('.mcard_make_notice_text_wrapper').slideDown()
+                }
+            }
+        })
+    }
+
+
+
+    //
+    // section 배경색상 결정
+    //
+    setTimeout(function(){
+        $('.section:visible').each(function(index) {
+            var cnt = index + 1
+            var zebra = (cnt % 2 === 0) ? 'even' : 'odd'
+
+            $(this).attr('data-zebra', zebra)
+        })
+    }, 100)
+
+
+}) // Document ready end
+
+
+/* anti-zoom */
+if(use_zoom == 1) {
+    window.visualViewport.addEventListener('resize', function() {
+        screen_scale = window.visualViewport.scale
+        dataViewUpdate()
+    })
+
+    function dataViewUpdate() {
+
+        let blur_to = 0
+        //if(screen_scale  default_scale)
+
+        if (screen_scale >= default_scale && screen_scale > default_scale+tolerance) {
+            blur_to += screen_scale
+            $('img[data-anti_zoom=1]').css('filter', 'blur'+'('+blur_to+'px'+')')
+        } else {
+            $('img[data-anti_zoom=1]').css('filter', 'blur'+'('+blur_to+'px'+')')
+        }
+
+    }
+}
+
+function checkbox_toggle(inm) { //input name
+
+    if ($("input[name=" + inm + "]").prop("checked")) {
+        $("img[alt=" + inm + "]").attr("src", $("img[alt=" + inm + "]").attr("src").replace("_on.png", "_off.png"))
+        $("input[name=" + inm + "]").prop("checked", false)
+    } else {
+        $("img[alt=" + inm + "]").attr("src", $("img[alt=" + inm + "]").attr("src").replace("_off.png", "_on.png"))
+        $("input[name=" + inm + "]").prop("checked", true)
+    }
+
+}
+
+function fold_toggle(oid) { //object id
+
+    if ($("#" + oid).css("display") == "none") {
+
+        $("#" + oid).show()
+
+        $("#" + oid + "_arrow").animate({
+            "transform": "rotate(180deg)"
+        })
+
+    } else {
+
+        $("#" + oid).hide()
+
+        $("#" + oid + "_arrow").animate({
+            "transform": "rotate(0deg)"
+        })
+
+    }
+
+}
+
+
+function photo_reply_update(idx) {
+    var reply_count = $('.reply[data-parent_idx=' + idx + ']').length
+    $('.photo_reply_counter[data-idx=' + idx + ']').text(reply_count)
+}
+
+
+function mask(opacity) {
+
+    if (opacity == 0) {
+
+        $('#mask').hide()
+        $('.mask_over').hide()
+
+    } else {
+
+        $('#mask').stop().fadeTo('slow', opacity)
+        $('#mask').show()
+
+    }
+
+}
+
+
+function textarea_resize(obj) {
+
+    // count
+    var text = $(obj).val()
+    var lines = text.split(/\r|\r\n|\n/)
+    var count = lines.length
+
+    // resize
+    var default_count = Number($(obj).attr('alt'))
+    if (!default_count) default_count = 1
+
+    if (count > 1) $(obj).css('height', 'auto')
+    if (count > default_count) $(obj).attr('rows', count)
+    else $(obj).attr('rows', default_count)
+
+}
+
+
+function basename(path) {
+    return path.split('/').reverse()[0]
+}
+
+function clipboard_copy(str) {
+    var tmpTextarea = document.createElement('textarea')
+    tmpTextarea.value = str
+    document.body.appendChild(tmpTextarea)
+    tmpTextarea.select()
+    tmpTextarea.setSelectionRange(0, 9999)
+    document.execCommand('copy')
+    document.body.removeChild(tmpTextarea)
+}
+
+
+//
+// 참석여부
+//
+
+// 팝업 영역으로 포함
+function updateSectionStyleByPop(section) {
+    let overflowVal = section.css('overflow')
+
+    section.removeClass('form_active')
+
+    setTimeout(function() {
+        section.attr('data-section_pop', '0')
+        section.find('.pop_close_btn_wrap').remove()
+        if (overflowVal) section.css('overflow', overflowVal)
+    }, 300) // transform 종료 후
+}
+
+// 참석여부 입력폼 리셋
+function resetAttendForm() {
+
+    // 폼 값 초기화 (HTML 기본값 기준)
+    rsvpForm[0].reset()
+
+    // 동적 UI 초기 상태 복구
+    renderMealGroup(1)
+    $('.ui-radio-btn-wrapper').removeClass('on')
+    $('.ui-checkbox-box').removeClass('checked')
+
+    // 부가 영역 숨김
+    $('.sc-joiners-box').hide()
+    $('.sc-att-confirm-btn-wrap').hide()
+    $('.ui-attendance-form-inner').hide()
+
+    // 카운트 및 화면 상태
+    $('.ui-att-confirm-btn-wrap .sc-att-count').text('1명')
+    confirmPopup.hide()
+    rsvpForm.show()
+}
+
+
+// 식사여부 선택영역 렌더
+function renderMealGroup(totalCount) {
+    var mealGroup = $('.ui-radio-group[data-type="meal"]')
+
+    mealGroup.empty()
+
+    if (totalCount === 1) {
+        mealGroup.append(
+            '<div class="ui-radio-btn-wrapper" data-side="a" data-value="1">' +
+                '<span class="ui-radio-btn"></span>' +
+                '<span class="ui-radio-label">식사합니다</span>' +
+            '</div>'
+        )
+    } else {
+        for (var i = totalCount; i >= 1; i--) {
+            mealGroup.append(
+                '<div class="ui-radio-btn-wrapper" data-side="a" data-value="' + i + '">' +
+                    '<span class="ui-radio-btn"></span>' +
+                    '<span class="ui-radio-label">식사 - ' + i + '명</span>' +
+                '</div>'
+            )
+        }
+    }
+
+    mealGroup.append(
+        '<div class="ui-radio-btn-wrapper" data-side="a" data-value="0">' +
+            '<span class="ui-radio-btn"></span>' +
+            '<span class="ui-radio-label">식사하지 않습니다</span>' +
+        '</div>'
+    )
+}
+function validateAndShowLayer() {
+    var isValid = true
+    var alertMsgs = []
+    var focusObjs = []
+    var joinersValue = parseInt(rsvpForm.find('select[name="joiners_count"]:visible').val()) || 0
+    let rsvpData = collectFormData()
+    var filteredData = filterRsvpDataByVisible(rsvpData)
+
+    // 참석 여부
+    var attGroup = $('.ui-radio-group[data-type="att"]')
+
+    if (attGroup.find('.ui-radio-btn-wrapper.on').length === 0) {
+        isValid = false
+        alertMsgs.push('참석 여부를 선택해주세요.')
+        focusObjs.push($('.ui-radio-btn-wrapper[data-type="att"]').first())
+    }
+
+    // 측 선택
+    var sideGroup = $('.ui-radio-group[data-type="side"]')
+    if (sideGroup.find('.ui-radio-btn-wrapper.on').length === 0) {
+        isValid = false
+        alertMsgs.push('하객정보를 선택해주세요.')
+        focusObjs.push(sideGroup.find('.ui-radio-btn-wrapper').first())
+    }
+
+    // 일반 필드
+    rsvpForm.find('[name]:visible').each(function() {
+        var inputName = $(this).attr('name')
+        var val = $(this).val().trim()
+
+        // skip field
+        if (inputName === 'joiners_count') return true
+        if (inputName === 'joiners') return true
+        if (inputName === 'rsvp_tel') return true
+
+        // 공통 필수 필드
+        if (val == '' || val == '0') {
+            isValid = false
+            var inputLabel = $(this).attr('placeholder')
+            alertMsgs.push(inputLabel + ' 항목을 입력해주세요.')
+            focusObjs.push($(this))
+            return false
+        }
+    })
+
+    // 연락처
+    var telInput = rsvpForm.find('input[name="rsvp_tel"]:visible')
+
+    if (telInput.length) {
+        var val = telInput.val().trim()
+        var onlyNumber = val.replace(/[^0-9]/g, '')
+
+        if (onlyNumber.length < 9) {
+            isValid = false
+            alertMsgs.push('연락처를 정확히 입력해주세요.')
+            focusObjs.push(telInput)
+        }
+    }
+
+    // 동행인
+    var joinerInput = rsvpForm.find('input[name="joiners"]:visible')
+    if (joinerInput.length && joinersValue > 0) {
+        var val = joinerInput.val().trim()
+
+        // 값이 비었을 경우
+        if (val == '') {
+            isValid = false
+            alertMsgs.push('동행인 성함을 쉼표로 구분하여 모두 입력해주세요.')
+            focusObjs.push(joinerInput)
+        }
+
+        // 끝 쉼표 또는 연속 쉼표
+        if (isValid) {
+            if (/,(\s*)$/.test(val) || /,,/.test(val)) {
+                isValid = false
+                alertMsgs.push('동행인 성함은 쉼표 구분으로 입력해주세요(마지막은 쉼표 X) \n예) 김민준,이서연')
+                focusObjs.push(joinerInput)
+            }
+        }
+
+        // 분해 후 유효 이름 수 검사
+        if (isValid) {
+            var joinerNameParts = val.split(',')
+            var names = []
+            var i
+
+            for (i = 0; i < joinerNameParts.length; i++) {
+                var name = joinerNameParts[i].trim()
+                if (name === '') {
+                    isValid = false
+                    alertMsgs.push('동행인 성함을 정확히 입력해주세요.')
+                    focusObjs.push(joinerInput)
+                    break
+                }
+                names.push(name)
+            }
+
+            if (isValid && names.length !== joinersValue) {
+                isValid = false
+                alertMsgs.push('동행인 성함을 ' + joinersValue + '명 모두 입력해주세요.')
+                focusObjs.push(joinerInput)
+            }
+        }
+    }
+    // 식사 여부
+    var mealGroup = $('.ui-radio-group[data-type="meal"]:visible')
+    if (mealGroup.length && mealGroup.find('.ui-radio-btn-wrapper.on').length === 0) {
+        isValid = false
+        alertMsgs.push('식사 여부를 선택해주세요.')
+        focusObjs.push(mealGroup.find('.ui-radio-btn-wrapper').first())
+    }
+
+    // 개인정보 동의
+    if (!rsvpForm.find('.ui-checkbox-item.checked').length) {
+        isValid = false
+        alertMsgs.push('개인정보 수집 동의를 체크해주세요.')
+        focusObjs.push(rsvpForm.find('.ui-checkbox-item .ui-checkbox-box').first())
+    }
+
+    // 공통 alert + 포커스
+    if (!isValid) {
+        // 첫 번째 실패 항목 기준 alert 표시
+        alert(alertMsgs[0])
+        if (focusObjs[0]) focusObjs[0].focus()
+        return false
+    }
+
+    // showConfirmationLayer(rsvpData)
+    showConfirmationLayer(filteredData)
+    return true
+}
+
+function collectFormData() {
+    let attendStatus = rsvpForm.find('.ui-radio-group[data-type="att"] .ui-radio-btn-wrapper.on').data('value')  // 참석여부
+    let guestSide = rsvpForm.find('.ui-radio-group[data-type="side"] .ui-radio-btn-wrapper.on').data('value')  // 하객 측 (a:신랑, b:신부)
+    let meal = rsvpForm.find('.ui-radio-group[data-type="meal"] .ui-radio-btn-wrapper.on').data('value') // 식사 여부 (1 / 0)
+
+    // 기본 정보
+    let attName = rsvpForm.find('input[name="rsvp_name"]').val().trim()
+    let tel = rsvpForm.find('input[name="rsvp_tel"]').val().trim()
+
+    // 동행인 관련
+    let joinersCount = parseInt(rsvpForm.find('[name="joiners_count"]').val()) || 0
+    let joinersName = rsvpForm.find('input[name="joiners"]').val().trim()
+
+    // 기타 전달 내용
+    let msg = rsvpForm.find('textarea').val().trim()
+
+    return {
+        uid: uid,
+        att: attendStatus,
+        side: guestSide,
+        meal: meal,
+        name: attName,
+        tel: tel,
+        joiners_count: joinersCount, // 숫자 형태로 반환
+        joiners: joinersName,   // 문자열 형태
+        msg: msg
+    }
+}
+
+function filterRsvpDataByVisible(rsvpData) {
+    var filteredData = {}
+
+    // 기본항목은 무조건 포함
+    filteredData.att = rsvpData.att
+    filteredData.side = rsvpData.side
+    filteredData.rsvp_name = rsvpData.name
+    filteredData.rsvp_tel = rsvpData.tel
+
+    // article_type별 처리 함수 매핑
+    var handlers = {
+        base: function(article) {
+            article.find('[name]').each(function() {
+                var name = $(this).attr('name')
+                if (rsvpData[name] !== undefined) {
+                    filteredData[name] = rsvpData[name]
+                }
+            })
+        },
+        meal: function(article) {
+            if (rsvpData.meal !== undefined) filteredData.meal = rsvpData.meal
+        },
+        msg: function(article) {
+            if (rsvpData.msg !== undefined) filteredData.msg = rsvpData.msg
+        }
+    }
+
+    // visible article 순회
+    $('#rsvpForm article:visible').each(function() {
+        var type = $(this).data('article_type')
+        if (handlers[type]) {
+            handlers[type]($(this))
+        }
+    })
+
+    return filteredData
+}
+
+
+function showConfirmationLayer(rsvpData) {
+    var confirmLayer = $('#confirmPopup')
+
+    var attMap  = { '1': '참석', '0': '불참석' }
+    var sideMap = { 'a': '신랑측 하객', 'b': '신부측 하객' }
+
+    var isAttending = rsvpData.att === 1
+
+    // 기본항목: 항상 표시
+    confirmLayer.find('li[data-key="att"] .ui-value-text').text(attMap[rsvpData.att] || '-').parent().show()
+    confirmLayer.find('li[data-key="side"] .ui-value-text').text(sideMap[rsvpData.side] || '-').parent().show()
+    confirmLayer.find('li[data-key="name"] .ui-value-text').text(rsvpData.rsvp_name || '-').parent().show()
+    confirmLayer.find('li[data-key="tel"] .ui-value-text').text(rsvpData.rsvp_tel || '-').parent().show()
+
+    // 조건부 항목
+    var conditionalKeys = ['joiners_count','joiners','meal','msg']
+
+    conditionalKeys.forEach(function(key) {
+        var li = confirmLayer.find('li[data-key="' + key + '"]')
+
+        // rsvpData에 없는 key는 숨김
+        if (rsvpData[key] === undefined) {
+            li.hide()
+            return
+        }
+
+        var value = rsvpData[key]
+
+        if (key === 'joiners_count') {
+            if (value && parseInt(value) > 0) {
+                li.find('.ui-value-text').text(value + '명').parent().show()
+            } else {
+                li.find('.ui-value-text').text('-').parent().show()
+            }
+        }
+
+        if (key === 'joiners') {
+            li.find('.ui-value-text').text(value ? value : '-').parent().show()
+        }
+
+        if (key === 'meal') {
+            var mealCount = parseInt(value)
+            if (!isNaN(mealCount) && mealCount > 0) {
+                li.find('.ui-value-text').text('식사 - ' + mealCount + '명').parent().show()
+            } else {
+                li.find('.ui-value-text').text('식사하지 않습니다').parent().show()
+            }
+        }
+
+        if (key === 'msg') {
+            li.find('.ui-value-text').text(value ? value : '-').parent().show()
+        }
+    })
+
+    rsvpForm.hide()
+    confirmLayer.show()
+}
+
+
+function submitRsvp() {
+    // 유효성 검사: 내부에서 실패 시 return
+    //if (!validateForm()) return
+
+    // 데이터 수집
+    var formData = collectFormData()
+
+    // AJAX 전송
+    $.ajax({
+        url: 'submit_rsvp.php',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+
+            if (response.error === 'DUPLICATE_DATA') {
+                alert('이미 동일한 내용으로 등록된 데이터가 있습니다')
+                return false
+            }
+            // 폼 초기화
+            resetAttendForm()
+
+            // 영역에 포함
+            let popupSection = $('.section[data-pop_type]')
+            applySectionPopupState(popupSection)
+
+            if (response.success == true) {
+                alert('참석 여부 등록이 완료되었습니다')
+            }
+
+        },
+        error: function() {
+            alert('서버와 통신 중 오류가 발생했습니다.')
+        }
+    })
+}
+
+
+
+// 팝업 진입 초기화 + 판단, 과거 사용 쿠키값 정리 포함
+function initSectionPopup(section) {
+
+    if (!section.length) return
+
+    var shouldOpen = shouldOpenSectionPopup(section)
+
+    if (!shouldOpen) {
+        applySectionPopHidden(section)
+    }
+
+}
+
+// 팝업 모드 결정
+function shouldOpenSectionPopup(section) {
+
+    var popType = section.data('pop_type')
+    var cookieVal = $.cookie('section_popup')
+
+    if (popType === 'always') {
+        if (cookieVal !== undefined) {
+            $.cookie('section_popup', '', { expires: -1, path: '/' })
+        }
+        return true
+    }
+
+    if (popType == 'day' && cookieVal == 'day') return false
+    if (popType == 'once' && cookieVal == 'once') return false
+
+    return true
+}
+
+// 재방문 상태 적용 (초기 진입용)
+function applySectionPopHidden(section) {
+
+    section.attr('data-section_pop', '0')
+    section.removeClass('form_active')
+    section.find('.pop_close_btn_wrap').remove()
+
+}
+
+// 팝업 쿠키 정책
+function applySectionPopupState(section) {
+
+    var popType = section.data('pop_type')
+
+    updateSectionStyleByPop(section)
+
+    if (popType == 'always') {
+        $.cookie('section_popup', '', { expires: -1, path: '/' })
+        return
+    }
+
+    if (popType == 'day') {
+        $.cookie('section_popup', 'day', { expires: 1, path: '/' })
+        return
+    }
+
+    if (popType == 'once') {
+        $.cookie('section_popup', 'once', { expires: 365, path: '/' })
+        return
+    }
+}
