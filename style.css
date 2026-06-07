@@ -966,8 +966,13 @@ input[name=act_hand_code] {
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 35px); 
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
 }
-
+.calendar tbody {
+  display: table-row-group;
+}
 .calendar tr {
   height: 32px;
 }
