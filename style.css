@@ -967,3 +967,15 @@ input[name=act_hand_code] {
     top: -2px;
     width: 6px;
 }
+
+.calendar {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.calendar th,
+.calendar td {
+  padding: 0;
+  line-height: 0;
+  vertical-align: middle;
+}
