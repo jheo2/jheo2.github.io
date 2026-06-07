@@ -985,7 +985,9 @@ input[name=act_hand_code] {
   margin: 0;
   line-height: 1 !important;
   vertical-align: middle;
-  height: 38px; /* 핵심: 고정 높이 */
+  height: 10px; /* 핵심: 고정 높이 */ 
+  max-height: 10px;
+  overflow: hidden;
 }
 
 /* =========================
@@ -1014,8 +1016,10 @@ input[name=act_hand_code] {
   display: block;
   margin: 0;
   padding: 0;
-  max-width: 100%;
-  height: auto;
+  max-width: 100%; 
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 /* =========================
