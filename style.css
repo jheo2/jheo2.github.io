@@ -986,7 +986,7 @@ input[name=act_hand_code] {
   line-height: 1 !important;
   vertical-align: middle;
   height: 10px; /* 핵심: 고정 높이 */ 
-  max-height: 10px;
+  max-height: 10px !important;
   overflow: hidden;
 }
 
@@ -1001,11 +1001,11 @@ input[name=act_hand_code] {
    Cell wrapper (span)
 ========================= */
 .calendar td span {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
   height: 100%;
-  line-height: 0;
+  line-height: 1 !important;
   font-size: 0;
 }
 
