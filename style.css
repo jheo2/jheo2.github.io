@@ -965,8 +965,7 @@ input[name=act_hand_code] {
 }
 .calendar {
   display: grid;
-  grid-template-columns: repeat(7, 40px);
-  grid-auto-rows: 1px; 
+  grid-template-columns: repeat(7, 35px); 
 }
 
 .calendar tr {
@@ -986,8 +985,39 @@ input[name=act_hand_code] {
   height: 30px;
   display: block;
 }
-
 .calendar td.dday {
-  background: #FF9845;
-  border-radius: 60%;
+  position: relative;
+}
+
+.calendar td.dday::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  background: #FFA359;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+
+
+}.calendar td.dday {
+  position: relative;
+}
+.calendar td.dday::before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  background: #FFA359;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}  
+.calendar td.dday .cell {
+  position: relative;
+  z-index: 1;
 }
