@@ -107,8 +107,23 @@ $(function() {
     */
 
 
-})
 
+    let bgmStarted = false; 
+    document.addEventListener('touchstart', function () {
+        if (bgmStarted) return;
+        bgmStarted = true;
+
+        $('#bgm_pp_btn').trigger('click');
+    }, { once: true }); 
+    document.addEventListener('click', function () {
+        if (bgmStarted) return;
+        bgmStarted = true;
+
+        $('#bgm_pp_btn').trigger('click');
+    }, { once: true });
+
+
+})
 
 
 function bgm_prog_update() {
