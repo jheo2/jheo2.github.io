@@ -3,7 +3,23 @@
 .textarea_single_row {
     height: 40px;
 }
+ 
 
+.bank_pop_copy_btn {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 24px;
+    margin-top: 0;
+}
+.bank_pop_copy_ui_back {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+}
+.bank_pop_copy_ui_front {
+    position: relative;
+}
 /*
         COMMON
                      */
