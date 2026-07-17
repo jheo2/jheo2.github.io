@@ -3353,12 +3353,54 @@ $(function(){
 
 
 <script>
-var slider
+
+function initSlider(){ 
+    if (slider) {
+        console.log("abc")
+        return; }
+    
+    
+    
+    slider = new Swiper(document.getElementById('photo_container'), { 
+    	loop: false,
+    	autoHeight: false,
+    	on: {
+    	    slideChangeTransitionStart: function(e){
+                photo_idx = $('img[data-photo_no='+(slider.activeIndex+1)+']').data('photo_idx')
+                $('.photo_view_img[data-photo_idx='+photo_idx+']').each(function(){
+                    $(this).attr('src', $(this).attr('src').replace('reqfor=load', 'reqfor=view'))
+                })
+            },
+    	    slideChangeTransitionEnd: function(e){
+    
+                photo_idx = $('img[data-photo_no='+(slider.activeIndex+1)+']').data('photo_idx')
+    
+    	        if ($('#photo_view_animater').length == 0) {
+    	            if ($('#photo_view').css('display') != 'none') {
+    	                $('html, body').animate({ scrollTop: 0 }, 100)
+    	            }
+    	        }
+    	        
+    	        $.cookie('photo_view_swiped_check', 1)
+                $('.photo_view_swipe_guide').hide()
+
+
+    
+            }
+    	}
+    
+    })
+
+
+ 
+}
+
+var slider = null;
 var use_photo_comment = '0';
 var use_photo_zoom = false; 
 
 function photo_view(obj) {
-
+    initSlider();
     mask(0.5)  
     photo_idx = $(obj).data('photo_idx') 
     var slide_to = Number($(obj).data('photo_no')) - 1
@@ -3558,8 +3600,7 @@ $(function(){
         'width': wrapper_width+'px'
     })
 
-    slider = new Swiper(document.getElementById('photo_container'), {
-    
+    slider = new Swiper(document.getElementById('photo_container'), { 
     	loop: false,
     	autoHeight: false,
     	on: {
