@@ -1047,8 +1047,130 @@ function app_install(appname){
     <!-- section_body -->
 
 </div>
-<!-- section_body_radius -->
 
+
+
+<div id="photo_section" class="section" data-section="photo" data-use_section="1" data-bg_no="4" data-zebra="odd">
+        <div class="section_header">
+	<div class="section_header_day day_title_wedding_invit"> wedding invitation </div>
+	<div class="section_header_day day_title_date"> date. </div>
+	<div class="section_header_day day_title_num"> 09/06</div>
+</div>
+
+<div class="photo_body_wrapper">
+<ul class="photo_title section_title">
+    <li class="section_title_img">
+        <!--background img 이용 -->
+    </li>        
+    <li>
+        갤러리
+    </li>
+</ul>
+
+<div id="photo_view_wrapper" style="background-color: #ffffff; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 2; display: none;"></div>
+<div class="section_body photo_section_body">
+
+<ul id="photo_counter">
+        <li>
+        <div class="photo_counter_num">0</div>
+        <div class="photo_counter_txt">비디오</div>
+    </li>
+        <li>
+        <div class="photo_counter_num image_count">11</div>
+        <div class="photo_counter_txt">포토</div>
+    </li>
+        <li>
+        <div class="photo_counter_num" style="color: #fd4976;">0</div>
+        <div class="photo_counter_txt">포토댓글</div>
+    </li>
+    
+</ul>
+
+
+
+
+
+
+<div>
+<style>
+.photo_video_play_button_wrapper {
+    position: absolute; top:0; width: 100%; height: 100%; text-align: center; vertical-align: center; cursor: pointer;
+}
+.photo_image {
+    width: 100%;
+    background: url('/m/img/loading5.gif') no-repeat;
+    background-size: 50% 50%;
+    background-position: center center;
+}
+</style>
+
+<!-- 사진 미리 불러오기 처리 -->
+<style>
+#photo_preloads {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    opacity: 0.001;
+}
+.photo_preload {
+    max-width: 100px;
+    max-height: 100px;
+}
+.photo_preload_wrapper {
+    display: inline-block;
+    font-size: 0;
+}
+</style>
+
+<div id="photo_preloads"><span class="photo_preload_wrapper" data-idx="5553188"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0b16e3b9dab1c1678592b9858a90eca9.jpg" id="photo_preload_5553188" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553181"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/2d57c964e8178fc2943fc7d3423c05ff.jpg" id="photo_preload_5553181" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553182"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/708942f9c593845c0672a8c29378b48f.jpg" id="photo_preload_5553182" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553183"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/dd196e01a326d06601cd486c6ed8ce37.jpg" id="photo_preload_5553183" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553184"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/c5e01e5718a4c2ca17034b85cd9e4997.jpg" id="photo_preload_5553184" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553180"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/fcb657e82918061243fafe3984df309b.jpg" id="photo_preload_5553180" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553186"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0c12227cf31b3ce54796d1aef7316b62.jpg" id="photo_preload_5553186" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553192"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/ed00e8cb5dc0a8cb67a1a16b89322d3b.jpg" id="photo_preload_5553192" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553187"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0a6537813b9572bbc20438e179722e9d.jpg" id="photo_preload_5553187" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553185"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/a5110f5165ee2ba682140be86da0455a.jpg" id="photo_preload_5553185" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553194"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/14f6b15b1dbb2b9aea9d7b612438f5a8.jpg" id="photo_preload_5553194" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553188"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0b16e3b9dab1c1678592b9858a90eca9.jpg" id="photo_preload_5553188" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553181"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/2d57c964e8178fc2943fc7d3423c05ff.jpg" id="photo_preload_5553181" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553182"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/708942f9c593845c0672a8c29378b48f.jpg" id="photo_preload_5553182" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553183"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/dd196e01a326d06601cd486c6ed8ce37.jpg" id="photo_preload_5553183" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553184"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/c5e01e5718a4c2ca17034b85cd9e4997.jpg" id="photo_preload_5553184" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553180"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/fcb657e82918061243fafe3984df309b.jpg" id="photo_preload_5553180" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553186"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0c12227cf31b3ce54796d1aef7316b62.jpg" id="photo_preload_5553186" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553192"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/ed00e8cb5dc0a8cb67a1a16b89322d3b.jpg" id="photo_preload_5553192" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553187"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0a6537813b9572bbc20438e179722e9d.jpg" id="photo_preload_5553187" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553185"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/a5110f5165ee2ba682140be86da0455a.jpg" id="photo_preload_5553185" crossorigin="bojagicard.com"></span><span class="photo_preload_wrapper" data-idx="5553194"><img class="photo_preload" src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/14f6b15b1dbb2b9aea9d7b612438f5a8.jpg" id="photo_preload_5553194" crossorigin="bojagicard.com"></span></div>
+
+<div id="photo_list_wrapper" class="photo-list-wrapper cols-3" data-type="1">
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553188" data-photo_no="1" data-photo_idx="5553188" data-fnm="0b16e3b9dab1c1678592b9858a90eca9.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0b16e3b9dab1c1678592b9858a90eca9.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553181" data-photo_no="2" data-photo_idx="5553181" data-fnm="2d57c964e8178fc2943fc7d3423c05ff.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/2d57c964e8178fc2943fc7d3423c05ff.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553182" data-photo_no="3" data-photo_idx="5553182" data-fnm="708942f9c593845c0672a8c29378b48f.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/708942f9c593845c0672a8c29378b48f.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553183" data-photo_no="4" data-photo_idx="5553183" data-fnm="dd196e01a326d06601cd486c6ed8ce37.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/dd196e01a326d06601cd486c6ed8ce37.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553184" data-photo_no="5" data-photo_idx="5553184" data-fnm="c5e01e5718a4c2ca17034b85cd9e4997.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/c5e01e5718a4c2ca17034b85cd9e4997.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553180" data-photo_no="6" data-photo_idx="5553180" data-fnm="fcb657e82918061243fafe3984df309b.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/fcb657e82918061243fafe3984df309b.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553186" data-photo_no="7" data-photo_idx="5553186" data-fnm="0c12227cf31b3ce54796d1aef7316b62.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0c12227cf31b3ce54796d1aef7316b62.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553192" data-photo_no="8" data-photo_idx="5553192" data-fnm="ed00e8cb5dc0a8cb67a1a16b89322d3b.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/ed00e8cb5dc0a8cb67a1a16b89322d3b.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper">
+		<img class="photo_image" id="photo_image_5553187" data-photo_no="9" data-photo_idx="5553187" data-fnm="0a6537813b9572bbc20438e179722e9d.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/0a6537813b9572bbc20438e179722e9d.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper" style="">
+		<img class="photo_image" id="photo_image_5553185" data-photo_no="10" data-photo_idx="5553185" data-fnm="a5110f5165ee2ba682140be86da0455a.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/a5110f5165ee2ba682140be86da0455a.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+	<div class="photo_wrapper" style="">
+		<img class="photo_image" id="photo_image_5553194" data-photo_no="11" data-photo_idx="5553194" data-fnm="14f6b15b1dbb2b9aea9d7b612438f5a8.jpg" data-src="https://mcard1.bojagicard.com/thm/?w=400&amp;h=400&amp;zc=t&amp;src=/ecard/photo/h/h3thnlqj/14f6b15b1dbb2b9aea9d7b612438f5a8.jpg" data-anti_zoom="1" onclick="photo_view(this)" >
+	</div>
+</div>
+<!-- PHOTO 리스트 하단 -->
+<div id="photo_more_row" style="display: none;">
+    <span>더보기</span>
+</div>
+</div>
+
+</div><!-- section body -->
+</div>    </div>
+
+
+
+<!-- section_body_radius -->
 <iframe id="checkframe" name="checkframe" src="about:blank" width="0" height="0" style="position:absolute; left:-100px;"></iframe>    </div>
         
     <div id="notice_section" class="section" data-section="notice" data-use_section="0" data-bg_no="" data-zebra="">
@@ -2255,20 +2377,14 @@ var use_photo_zoom = false;
 
 function photo_view(obj) {
 
-    mask(0.5)
-
-    photo_idx = $(obj).data('photo_idx')
-
+    mask(0.5) 
+    photo_idx = $(obj).data('photo_idx') 
     var slide_to = Number($(obj).data('photo_no')) - 1
-    slider.slideTo(slide_to, 0)
-
+    slider.slideTo(slide_to, 0) 
     //console.log($('.photo_view_img[data-photo_idx='+photo_idx+']').attr('src'))
     $('.photo_view_img[data-photo_idx='+photo_idx+']').each(function(){
         $(this).attr('src', $(this).attr('src').replace('reqfor=load', 'reqfor=view'))
-    })
-    
-
-
+    }) 
     //뺴꼼
     $('#photo_view').css({
         'display': 'block', 
@@ -2276,9 +2392,7 @@ function photo_view(obj) {
         'z-index': '3', 
         'top': (window.innerHeight-42)+'px', 
         'left': $('#photo_section').offset().left
-    })
-
-
+    }) 
     //슬라이드 업
     setTimeout(function(){
 
