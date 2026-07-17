@@ -3354,16 +3354,20 @@ $(function(){
 
 <script>
 var slider
-var use_photo_comment = '1';
-var use_photo_zoom = false;
+var use_photo_comment = '0';
+var use_photo_zoom = false; 
 
 function photo_view(obj) {
 
-    mask(0.5) 
+    mask(0.5)  
     photo_idx = $(obj).data('photo_idx') 
     var slide_to = Number($(obj).data('photo_no')) - 1
-    //slider.slideTo(slide_to, 0) 
+    slider.slideTo(slide_to) 
+ 
     //console.log($('.photo_view_img[data-photo_idx='+photo_idx+']').attr('src'))
+    
+    console.log('클릭 idx:', $(obj).data('photo_idx'));
+
     $('.photo_view_img[data-photo_idx='+photo_idx+']').each(function(){
         $(this).attr('src', $(this).attr('src').replace('reqfor=load', 'reqfor=view'))
     }) 
@@ -3465,7 +3469,7 @@ function photo_write(idx) {
 }
 
 
-function photo_delete() {llllllllllllllllll
+function photo_delete() {
     if (confirm('사진과 함께 댓글도 모두 삭제됩니다.\n\n삭제하시겠습니까?')) {
         location.href = 'photo_del_proc.php?uid=h3thnlqj&idx='+photo_idx
     }
@@ -3585,7 +3589,7 @@ $(function(){
     
     })
 
-    $('#photo_view').hide()
+    $('#photo_view').show()
 
     //스와이프 가이드 화살표 이미지
     if (!$.cookie('photo_view_swiped_check')) {
